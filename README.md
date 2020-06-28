@@ -1,12 +1,10 @@
-## Influencer Toolkit Newsletters
+## Flybird
 
-Influencer Toolkit Newsletters is a web app that provides users with a fast and easy way to create a newsletter sign up page. It's currently geared towards Twitter users.
+Flybird helps boost subscriptions to your newsletter.
 
-The user visits the website, logs with their Twitter account, and submits their email address. They receive a link to their newsletter sign up page which they can share with anyone, and they will be notified by email any time someone signs up for their newsletter.
+Visit the website, sign in with your Twitter account, and setup a subscriptions page. Share this link with anyone who might be interested in learning more about your newsletter.
 
-Sign up links can include a referral code which will be passed along in the notification email any time someone signs up.
-
-For example, this sign up link "https://itk-signup.herokuapp.com/treylorswift?refTw=balajis" would credit the Twitter user 'balajis' any time someone signs up for 'treylorswift's newsletter.
+Any time some submits their email address on your subscriptions page, you'll get an email notification.
 
 ![admin](https://i.imgur.com/JKYe1aB.png)
 ![signup](https://i.imgur.com/MTsT8It.png)
