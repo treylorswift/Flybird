@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "target": "es2018",
+        "lib": [ "es2018", "DOM" ],
+        "sourceMap": true,
+        "outFile": "../build/Server/www/Client.js"
+    },
+    "files": [
+        "Site.ts",
+        "HomePage.ts",
+        "LoginPage.ts",
+        "SignUpPage.ts",
+        "DOMComponent.ts",
+        "DOMSite.ts",
+        "../Shared/ServerApi.ts"
+    ]
+}
