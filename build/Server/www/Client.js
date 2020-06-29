@@ -55,8 +55,8 @@ define("Shared/RPC", ["require", "exports"], function (require, exports) {
     exports.Response = Response;
     class Transport {
     }
-    Transport.g_transport = null;
     exports.Transport = Transport;
+    Transport.g_transport = null;
     function SetTransport(t) {
         Transport.g_transport = t;
     }
@@ -186,23 +186,6 @@ define("Shared/ServerApi", ["require", "exports", "Shared/RPC"], function (requi
     }
     exports.GetLoggedInUserResponse = GetLoggedInUserResponse;
     ////////////////////
-    //Initiate Login Oauth Flow
-    //////////////////
-    async function Login() {
-        return new LoginCall().Call();
-    }
-    exports.Login = Login;
-    class LoginCall extends RPC.Call {
-        constructor() {
-            super(...arguments);
-            this.method = "Login";
-        }
-    }
-    exports.LoginCall = LoginCall;
-    class LoginResponse extends RPC.Response {
-    }
-    exports.LoginResponse = LoginResponse;
-    ////////////////////
     //Sign Up for a mailing list
     //////////////////
     async function SignUp(args) {
@@ -300,6 +283,23 @@ define("Shared/ServerApi", ["require", "exports", "Shared/RPC"], function (requi
     class GetUserSignUpsResponse extends RPC.Response {
     }
     exports.GetUserSignUpsResponse = GetUserSignUpsResponse;
+    /////////////////
+    //Get stats about who has referred people for the sign ups
+    ///////////////////
+    async function GetReferralStats() {
+        return new GetReferralStatsCall().Call();
+    }
+    exports.GetReferralStats = GetReferralStats;
+    class GetReferralStatsCall extends RPC.Call {
+        constructor() {
+            super(...arguments);
+            this.method = "GetReferralStats";
+        }
+    }
+    exports.GetReferralStatsCall = GetReferralStatsCall;
+    class GetReferralStatsResponse extends RPC.Response {
+    }
+    exports.GetReferralStatsResponse = GetReferralStatsResponse;
 });
 define("Shared/HTTPRPCTransport", ["require", "exports", "Shared/RPC"], function (require, exports, RPC) {
     "use strict";
@@ -497,8 +497,8 @@ define("Client/DOMComponent", ["require", "exports"], function (require, exports
             DOMPopupHandle.count++;
         }
     }
-    DOMPopupHandle.count = 0;
     exports.DOMPopupHandle = DOMPopupHandle;
+    DOMPopupHandle.count = 0;
     class DOMComponent {
         constructor(parent) {
             this.parent = parent;
@@ -717,7 +717,7 @@ define("Client/SignUpPage", ["require", "exports", "Shared/ServerApi", "Client/D
             let w = 144 / window.devicePixelRatio;
             let h = 144 / window.devicePixelRatio;
             em.innerHTML =
-                `<div style="position:fixed; left:0; top:0; width:100vw; height:100vh; display:flex; background-color: #dce3e9">
+                `<div class="subscriptionBackground">
             <div style="margin:auto; border-radius: 6px; box-shadow: #bcbcbc 0px 0px 11px; padding: 30px 30px; background-color: #fff; max-width:400px">
                 <div style="display:flex; justify-content:center; align-items: center">
                     <img src="${imageUrl}" style="vertical-align:middle; width:${w}px; height:${h}px; border-radius:${w}px">
@@ -730,7 +730,9 @@ define("Client/SignUpPage", ["require", "exports", "Shared/ServerApi", "Client/D
                 <div id="signUpResult"></div>
                 </center>
             </div>
-            </div>`;
+            </div>
+                <div class="subscriptionLogoDiv"><a href="/"><img class="subscriptionLogoImg" src="/flybird.png"></a></div>
+`;
             this.signUpButton = em.querySelector('#signUpButton');
             this.emailInput = em.querySelector('#email');
             this.signUpResult = em.querySelector('#signUpResult');
@@ -837,7 +839,7 @@ define("Client/HomePage", ["require", "exports", "Shared/ServerApi", "Client/DOM
                 message = this.userInfo.subscription_message;
             //the link they will direct potential subscribers to once they set their email address..
             em.innerHTML =
-                `<div style="max-width:530px">
+                `<div style="max-width:560px">
             <div class="section">
                 What message would you like to show on your subscription page?<br/><br/>
                 <textarea id="message" style="box-sizing: border-box; width:100%; height:96px">${message}</textarea>
@@ -916,13 +918,63 @@ define("Client/LoginPage", ["require", "exports", "Client/DOMComponent"], functi
     }
     exports.LoginPage = LoginPage;
 });
-define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "Shared/HTTPRPCTransport", "Client/DOMSite", "Client/HomePage", "Client/LoginPage", "Client/SignUpPage"], function (require, exports, RPC, ServerApi, HTTPRPCTransport_js_1, DOMSite_js_1, HomePage_js_1, LoginPage_js_1, SignUpPage_js_2) {
+define("Client/ReferralsPage", ["require", "exports", "Shared/ServerApi", "Client/DOMComponent"], function (require, exports, ServerApi, DOMComponent_js_5) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class ReferralsPage extends DOMComponent_js_5.DOMComponent {
+        constructor() {
+            super(...arguments);
+            this.referralsDiv = null;
+        }
+        async Render(em) {
+            let json = await ServerApi.GetReferralStats();
+            em.innerHTML =
+                `<div style="width:560px">
+            <div class="section">
+                <div style="display:inline-block; margin-bottom:12px; font-size:26px;">Leaderboard</div>
+                <div id="referralsDiv"></div>
+            </div>`;
+            this.referralsDiv = em.querySelector('#referralsDiv');
+            if (!json.success || json.referrals.length <= 0) {
+                this.referralsDiv.innerHTML = "No one has referred any subscribers yet.";
+                return;
+            }
+            let html = `<div class="referrerHeaderRow">
+                <div class="referrerIcon">&nbsp</div>
+                <div class="referrerName">Name</div>
+                <div class="referrerScreenName">Twitter Handle</div>
+                <div class="referrerTotal">Total Referrals</div>
+            </div>`;
+            for (var i = 0; i < json.referrals.length; i++) {
+                let r = json.referrals[i];
+                let imgUrl = r.profile_image_url;
+                if (!imgUrl)
+                    imgUrl = "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png";
+                html +=
+                    `<div class="referrerRow" onclick="window.open('https://twitter.com/${r.screen_name}', '_blank')">
+                <div class="referrerIcon"><img class="referrerIconImg" src="${imgUrl}"></div>
+                <div class="referrerName">${r.name}</div>
+                <div class="referrerScreenName">${r.screen_name}</div>
+                <div class="referrerTotal">${r.total}</div>
+            </div>`;
+            }
+            this.referralsDiv.innerHTML = html;
+        }
+        async RenderCleanup() {
+        }
+    }
+    exports.ReferralsPage = ReferralsPage;
+});
+define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "Shared/HTTPRPCTransport", "Client/DOMSite", "Client/HomePage", "Client/LoginPage", "Client/SignUpPage", "Client/ReferralsPage"], function (require, exports, RPC, ServerApi, HTTPRPCTransport_js_1, DOMSite_js_1, HomePage_js_1, LoginPage_js_1, SignUpPage_js_2, ReferralsPage_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Site extends DOMSite_js_1.DOMSite {
         constructor() {
             super();
             this.loggedInUser = null;
+            this.Logout = () => {
+                window.location.href = '/logout';
+            };
             if (Site.g_site) {
                 console.log("Site.g_site already exists, should never have multiple Site instantiations");
                 return;
@@ -931,6 +983,7 @@ define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "
             this.routerContentElement = null;
             var map = {
                 "/login": LoginPage_js_1.LoginPage,
+                "/referrals": ReferralsPage_js_1.ReferralsPage,
                 "/": HomePage_js_1.HomePage
             };
             this.InitRoutes(map);
@@ -959,8 +1012,9 @@ define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "
                 `<div style="display:flex; justify-content:centered; align-items:flex-start; margin-top:16px">
                 <div style="display:inline-block;">
                     <div class="dock">
-                            <div class="dockItemDiv"><img class="dockItemImg" style="border-radius:0px" src="flybird_dock_icon.png"><span class="dockItemTitle">Subscription Page</span></div>
-                            <div class="dockItemDiv"><img class="dockItemImg" src="${profile_image_url}"></div>
+                            <div id="subscriptionsDiv" class="dockItemDiv"><img class="dockItemImg" style="border-radius:0px" src="flybird_dock_icon.png"><span class="dockItemTitle">Subscriptions</span></div>
+                            <div id="referralsDiv" class="dockItemDiv"><img class="dockItemImg" src="/followers_icon.png"><span class="dockItemTitle">Referrals</span></div>
+                            <div id="logoutDiv" class="dockItemDiv"><img class="dockItemImg" src="${profile_image_url}"><span class="dockItemTitle">Log Out</span></div>
                     </div>
                 </div>
                 <div style="display:inline-block; flex-grow:1">
@@ -970,6 +1024,9 @@ define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "
                 </div>
             </div>
             `;
+            this.MapEvent(em, 'logoutDiv', 'click', this.Logout);
+            this.MapEvent(em, 'referralsDiv', 'click', () => this.RouteTo('/referrals'));
+            this.MapEvent(em, 'subscriptionsDiv', 'click', () => this.RouteTo('/'));
             /*
                 `<body style='font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size:15px;'>
                 <div style="display:flex; justify-content:center">
@@ -1015,8 +1072,11 @@ define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "
                     return;
                 }
                 this.AttachDefaultRouter(em);
-                //default route, go to / (home page)
-                await this.RouteTo("/");
+                let routeOk = await this.RouteTo(window.location.pathname);
+                if (!routeOk) {
+                    //default route, go to / (home page)
+                    this.RouteTo("/");
+                }
             }
             catch (err) {
                 console.log("error");
@@ -1027,7 +1087,7 @@ define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "
             this.Render(document.getElementById("site"));
         }
     }
-    Site.g_site = null;
     exports.Site = Site;
+    Site.g_site = null;
 });
 //# sourceMappingURL=Client.js.map

@@ -6,6 +6,7 @@ import { DOMSite } from "./DOMSite.js"
 import { HomePage } from "./HomePage.js"
 import { LoginPage } from "./LoginPage.js"
 import { SignUpPage } from "./SignUpPage.js"
+import { ReferralsPage } from "./ReferralsPage.js"
 
 export class Site extends DOMSite
 {
@@ -33,6 +34,7 @@ export class Site extends DOMSite
         var map = 
         {
             "/login":LoginPage,
+            "/referrals":ReferralsPage,
             "/":HomePage
         };
 
@@ -61,6 +63,11 @@ export class Site extends DOMSite
         this.routerContentElement = em.querySelector('#routerContentId');   
     }
 
+    Logout = ()=>
+    {
+        window.location.href = '/logout'
+    }
+
     AttachDefaultRouter(em:HTMLElement)
     {
         //apply the title bar and router content div
@@ -69,8 +76,9 @@ export class Site extends DOMSite
            `<div style="display:flex; justify-content:centered; align-items:flex-start; margin-top:16px">
                 <div style="display:inline-block;">
                     <div class="dock">
-                            <div class="dockItemDiv"><img class="dockItemImg" style="border-radius:0px" src="flybird_dock_icon.png"><span class="dockItemTitle">Subscription Page</span></div>
-                            <div class="dockItemDiv"><img class="dockItemImg" src="${profile_image_url}"></div>
+                            <div id="subscriptionsDiv" class="dockItemDiv"><img class="dockItemImg" style="border-radius:0px" src="flybird_dock_icon.png"><span class="dockItemTitle">Subscriptions</span></div>
+                            <div id="referralsDiv" class="dockItemDiv"><img class="dockItemImg" src="/followers_icon.png"><span class="dockItemTitle">Referrals</span></div>
+                            <div id="logoutDiv" class="dockItemDiv"><img class="dockItemImg" src="${profile_image_url}"><span class="dockItemTitle">Log Out</span></div>
                     </div>
                 </div>
                 <div style="display:inline-block; flex-grow:1">
@@ -80,6 +88,9 @@ export class Site extends DOMSite
                 </div>
             </div>
             `;
+        this.MapEvent(em, 'logoutDiv','click',this.Logout);
+        this.MapEvent(em, 'referralsDiv','click',()=>this.RouteTo('/referrals'));
+        this.MapEvent(em, 'subscriptionsDiv', 'click',()=>this.RouteTo('/'));
 
         /*
             `<body style='font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size:15px;'>
@@ -141,8 +152,12 @@ export class Site extends DOMSite
 
             this.AttachDefaultRouter(em);
 
-            //default route, go to / (home page)
-            await this.RouteTo("/");
+            let routeOk = await this.RouteTo(window.location.pathname);
+            if (!routeOk)
+            {
+                //default route, go to / (home page)
+                this.RouteTo("/");
+            }
         }
         catch (err)
         {

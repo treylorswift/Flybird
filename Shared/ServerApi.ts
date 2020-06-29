@@ -45,25 +45,6 @@ export class GetLoggedInUserResponse extends RPC.Response
     loggedInUser:LoggedInUser = null;
 }
 
-////////////////////
-//Initiate Login Oauth Flow
-//////////////////
-
-export async function Login():Promise<LoginResponse>
-{
-    return new LoginCall().Call() as Promise<LoginResponse>;
-}
-
-export class LoginCall extends RPC.Call
-{
-    method = "Login"
-}
-
-export class LoginResponse extends RPC.Response
-{
-    loggedInUser:LoggedInUser;
-}
-
 
 ////////////////////
 //Sign Up for a mailing list
@@ -224,5 +205,26 @@ export class GetUserSignUpsCall extends RPC.Call
 
 export class GetUserSignUpsResponse extends RPC.Response
 {
-    signUps:Array<{email:string,referrer:string}>;
+    signUps:Array<{email:string}>;
+}
+
+/////////////////
+//Get stats about who has referred people for the sign ups
+///////////////////
+
+export async function GetReferralStats():Promise<GetReferralStatsResponse>
+{
+    return new GetReferralStatsCall().Call() as Promise<GetReferralStatsResponse>;
+}
+
+export class GetReferralStatsCall extends RPC.Call
+{
+    method = "GetReferralStats"
+    
+    args:{};
+}
+
+export class GetReferralStatsResponse extends RPC.Response
+{
+    referrals:Array<{screen_name:string, name:string, profile_image_url:string, total:number}>;
 }

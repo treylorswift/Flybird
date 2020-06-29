@@ -11,6 +11,7 @@
         "HomePage.ts",
         "LoginPage.ts",
         "SignUpPage.ts",
+        "ReferralsPage.ts",
         "DOMComponent.ts",
         "DOMSite.ts",
         "../Shared/ServerApi.ts"

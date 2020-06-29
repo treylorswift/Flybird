@@ -32,7 +32,7 @@ const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 var CALLBACK_URL = 'https://itk-signup.herokuapp.com/auth/twitter/callback';
 if (g_localDevServer)
-    CALLBACK_URL = 'http://localhost:3000/auth/twitter/callback';
+    CALLBACK_URL = 'http://localhost/auth/twitter/callback';
 //this is used to encrypt session cookies - in production, should be in an environment variable defined on the server
 let SESSION_SECRET = process.env.SESSION_SECRET;
 if (g_localDevServer)
@@ -77,13 +77,15 @@ class PGDB {
             this.pool = new pg.Pool(dbConfig);
             let res;
             //res = await this.pool.query(
-            //    `DROP TABLE ITKUsers;`);
+            //    `DROP TABLE Users;`);
             //////////////////////
-            //the ITKUsers table
-            //everyone who has signed in via twitter
-            //and any additional info they've saved like their email address, their subscription message
+            //the Users table
+            //includes:
+            //1a) everyone who has signed in via twitter to use the site (id,screen_name,name,profile_image_url)
+            //1b) any additional info they've saved  (their email address, their subscription message)
+            //2) everyone who has been referrenced as a referrer in a signup ((id,screen_name,name,profile_image_url)
             ////////////////////
-            res = await this.pool.query(`CREATE TABLE IF NOT EXISTS ITKUsers
+            res = await this.pool.query(`CREATE TABLE IF NOT EXISTS Users
                 (
                     id_str TEXT NOT NULL PRIMARY KEY,
                     screen_name TEXT,
@@ -92,16 +94,17 @@ class PGDB {
                     email TEXT,
                     subscription_message TEXT
                 );`);
-            res = await this.pool.query(`ALTER TABLE ITKUsers ADD COLUMN IF NOT EXISTS profile_image_url TEXT;`);
-            res = await this.pool.query(`ALTER TABLE ITKUsers ADD COLUMN IF NOT EXISTS name TEXT;`);
-            res = await this.pool.query(`ALTER TABLE ITKUsers ADD COLUMN IF NOT EXISTS subscription_message TEXT;`);
+            res = await this.pool.query(`ALTER TABLE Users ADD COLUMN IF NOT EXISTS profile_image_url TEXT;`);
+            res = await this.pool.query(`ALTER TABLE Users ADD COLUMN IF NOT EXISTS name TEXT;`);
+            res = await this.pool.query(`ALTER TABLE Users ADD COLUMN IF NOT EXISTS subscription_message TEXT;`);
+            //console.log("Remove this DROP TABLE");
             //res = await this.pool.query(`DROP TABLE SignUps`);
             res = await this.pool.query(`CREATE TABLE IF NOT EXISTS SignUps
                 (
                     publisher_id_str TEXT NOT NULL,
                     subscriber_email TEXT NOT NULL,
                     referrer_id_str TEXT,
-                    CONSTRAINT prevent_duplicates UNIQUE(publisher_id_str,subscriber_email,referrer_id_str)
+                    CONSTRAINT prevent_duplicate_signups UNIQUE(publisher_id_str,subscriber_email,referrer_id_str)
                 );`);
             //index the SignUps by publisher and referrer
             res = await this.pool.query(`
@@ -111,6 +114,28 @@ class PGDB {
             `);
             res = await this.pool.query(`
                 CREATE INDEX IF NOT EXISTS SignUps_referrer_index ON SignUps (
+	                "referrer_id_str"
+                );
+            `);
+            //console.log("Remove this DROP TABLE");
+            //res = await this.pool.query(`DROP TABLE ReferrerTotals`);
+            //create the table to track referrer stats
+            res = await this.pool.query(`CREATE TABLE IF NOT EXISTS ReferrerTotals
+                (
+                    publisher_id_str TEXT NOT NULL PRIMARY KEY,
+                    referrer_id_str TEXT NOT NULL,
+                    total INTEGER DEFAULT 0,
+                    CONSTRAINT prevent_duplicate_referrertotals UNIQUE(publisher_id_str,referrer_id_str)
+                );`);
+            //index the total so it can be sorted quickly
+            res = await this.pool.query(`
+                CREATE INDEX IF NOT EXISTS ReferrerTotals_total_index ON ReferrerTotals (
+	                "total"
+                );
+            `);
+            //index the referrer_id_str so it can be sorted quickly
+            res = await this.pool.query(`
+                CREATE INDEX IF NOT EXISTS ReferrerTotals_referrer_id_str_index ON ReferrerTotals (
 	                "referrer_id_str"
                 );
             `);
@@ -125,7 +150,7 @@ class PGDB {
     }
     async GetUserByScreenName(screen_name) {
         try {
-            const res = await this.pool.query(`SELECT * FROM ITKUsers WHERE screen_name=$1`, [screen_name]);
+            const res = await this.pool.query(`SELECT * FROM Users WHERE screen_name=$1`, [screen_name]);
             return res.rows[0];
         }
         catch (err) {
@@ -136,7 +161,7 @@ class PGDB {
     }
     async GetUserById(id_str) {
         try {
-            const res = await this.pool.query(`SELECT * FROM ITKUsers WHERE id_str=$1`, [id_str]);
+            const res = await this.pool.query(`SELECT * FROM Users WHERE id_str=$1`, [id_str]);
             return res.rows[0];
         }
         catch (err) {
@@ -147,7 +172,7 @@ class PGDB {
     }
     async SetUserScreenNameAndEmail(id_str, screen_name, email) {
         try {
-            const res = await this.pool.query(`INSERT INTO ITKUsers (id_str, screen_name, email) VALUES ($1,$2,$3)
+            const res = await this.pool.query(`INSERT INTO Users (id_str, screen_name, email) VALUES ($1,$2,$3)
                  ON CONFLICT (id_str) DO UPDATE SET screen_name=$2,email=$3`, [id_str, screen_name, email]);
             return true;
         }
@@ -159,7 +184,7 @@ class PGDB {
     }
     async SetUserSubscriptionMessage(id_str, message) {
         try {
-            const res = await this.pool.query(`INSERT INTO ITKUsers (id_str, subscription_message) VALUES ($1,$2)
+            const res = await this.pool.query(`INSERT INTO Users (id_str, subscription_message) VALUES ($1,$2)
                  ON CONFLICT (id_str) DO UPDATE SET subscription_message=$2`, [id_str, message]);
             return true;
         }
@@ -169,25 +194,42 @@ class PGDB {
             return false;
         }
     }
-    async InitUser(id_str, screen_name, name, profile_image_url) {
+    async SetUser(id_str, screen_name, name, profile_image_url) {
         try {
-            const res = await this.pool.query(`INSERT INTO ITKUsers (id_str, screen_name, name, profile_image_url) VALUES ($1,$2,$3,$4)
+            const res = await this.pool.query(`INSERT INTO Users (id_str, screen_name, name, profile_image_url) VALUES ($1,$2,$3,$4)
                  ON CONFLICT (id_str) DO UPDATE SET screen_name=$2, name=$3, profile_image_url=$4`, [id_str, screen_name, name, profile_image_url]);
             //console.log(JSON.stringify(res));
         }
         catch (err) {
-            console.log("InitUser error:");
+            console.log("SetUser error:");
             console.error(err);
         }
     }
     async StoreSignUp(publisher_id_str, subscriber_email, referrer_id_str) {
         try {
-            const res = await this.pool.query(`INSERT INTO SignUps (publisher_id_str, subscriber_email, referrer_id_str) VALUES ($1,$2,$3)
-                    ON CONFLICT ON CONSTRAINT prevent_duplicates DO NOTHING;`, [publisher_id_str, subscriber_email, referrer_id_str]);
+            const res = await this.pool.query(`INSERT INTO SignUps (publisher_id_str, subscriber_email, referrer_id_str) VALUES ($1,$2,$3)`, [publisher_id_str, subscriber_email, referrer_id_str]);
         }
         catch (err) {
-            console.log("InitUser error:");
-            console.error(err);
+            if (err.constraint === 'prevent_duplicate_signups') {
+                console.log(`StoreSignUp detected duplicate sign up: ${publisher_id_str},${subscriber_email},${referrer_id_str} - ignoring`);
+                return;
+            }
+            else {
+                console.log(`StoreSignUp error storing signup for ${publisher_id_str}. ReferrerTotals not updated.`);
+                console.error(err);
+            }
+            return;
+        }
+        //increment the referral count for this referrer
+        if (referrer_id_str) {
+            try {
+                const res = await this.pool.query(`INSERT INTO ReferrerTotals (publisher_id_str, referrer_id_str, total) VALUES ($1, $2, 1)
+                    ON CONFLICT ON CONSTRAINT prevent_duplicate_referrertotals DO UPDATE SET total = referrertotals.total + 1 WHERE referrertotals.publisher_id_str=$1 AND referrertotals.referrer_id_str=$2`, [publisher_id_str, referrer_id_str]);
+            }
+            catch (err) {
+                console.log(`StoreSignUp error incrementing referral total for publisher: ${publisher_id_str}, referrer: ${referrer_id_str}:`);
+                console.error(err);
+            }
         }
         //console.log(JSON.stringify(res));
     }
@@ -202,9 +244,20 @@ class PGDB {
         }
         return null;
     }
+    async GetReferrerTotals(publisher_id_str) {
+        try {
+            const res = await this.pool.query(`SELECT referrer_id_str,total FROM ReferrerTotals WHERE publisher_id_str=$1 ORDER BY total DESC`, [publisher_id_str]);
+            return res.rows;
+        }
+        catch (err) {
+            console.log("GetReferrerTotals error:");
+            console.error(err);
+        }
+        return null;
+    }
     async RemoveUserById(id_str) {
         try {
-            const res = await this.pool.query(`DELETE FROM ITKUsers WHERE id_str=$1`, [id_str]);
+            const res = await this.pool.query(`DELETE FROM Users WHERE id_str=$1`, [id_str]);
             //console.log(JSON.stringify(res));
         }
         catch (err) {
@@ -232,7 +285,7 @@ app.get('/auth/twitter', async (req, res) => {
                 name = profile.displayName;
             }
             catch (err) { }
-            let setOK = await g_pgdb.InitUser(profile.id, profile.username, name, profile_image_url);
+            let setOK = await g_pgdb.SetUser(profile.id, profile.username, name, profile_image_url);
             cb(null, profile);
         }
         catch (err) {
@@ -250,6 +303,10 @@ app.get('/auth/twitter/callback', passport.authenticate('twitter', { successRedi
 //something went wrong
 app.get('/authError', (req, res) => {
     res.send('<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body><br/><br/>Error logging you in with Twitter, sorry</body></html>');
+});
+app.get('/logout', function (req, res) {
+    req.logout();
+    res.redirect('/');
 });
 function GetProfileFromRequest(req) {
     try {
@@ -303,6 +360,8 @@ HTTPRPCTransport_1.HTTPRPC.SetHandler(ServerApi.SignUpCall, async (c) => {
         try {
             //gotta look up the id_str of this screen name
             let showResult = await g_bearerTokenTwitter.get("users/show", { screen_name: c.args.referrer_screen_name, include_entities: false, stringify_ids: true });
+            //ensure the referrer gets into our Users table
+            g_pgdb.SetUser(showResult.id_str, showResult.screen_name, showResult.name, showResult.profile_image_url_https);
             referrer_id_str = showResult.id_str;
             referringTwitterHandle = c.args.referrer_screen_name;
         }
@@ -367,12 +426,41 @@ HTTPRPCTransport_1.HTTPRPC.SetHandler(ServerApi.GetUserSignUpsCall, async (c, pr
     //is there a valid profile?
     if (!profile || !profile.id || !profile.username)
         return { success: false, signUps: null, error: RPC.Error.NotLoggedIn };
+    //pull emails out of the SignUps table    
     let rows = await g_pgdb.GetSignUps(profile.id);
     let returnRows = new Array();
     for (var i = 0; i < rows.length; i++) {
         returnRows.push({ email: rows[i].subscriber_email, referrer: rows[i].referrer_id_str });
     }
     return { success: true, signUps: returnRows };
+});
+///////////////
+//handle GetReferralStats
+// returns all the emails that have signed up for the logged in user
+////////////////////////
+HTTPRPCTransport_1.HTTPRPC.SetHandler(ServerApi.GetReferralStatsCall, async (c, profile) => {
+    //is there a valid profile?
+    if (!profile || !profile.id || !profile.username)
+        return { success: false, referrals: null, error: RPC.Error.NotLoggedIn };
+    //get all sign up records for this user
+    let rows = await g_pgdb.GetReferrerTotals(profile.id);
+    if (!rows || !rows.length)
+        return { success: true, referrals: [] };
+    let returnRows = new Array();
+    for (var i = 0; i < rows.length; i++) {
+        let rid = rows[i].referrer_id_str;
+        let total = rows[i].total;
+        //look up the cached twitter info for this referrer
+        let userInfo = await g_pgdb.GetUserById(rid);
+        if (!userInfo) {
+            console.log(`No cached Twitter user info for referrer ${rid}, can't return screen_name / name / profile_image_url`);
+            returnRows.push({ screen_name: "Unknown", name: "Unknown", profile_image_url: '', total: total });
+        }
+        else {
+            returnRows.push({ screen_name: userInfo.screen_name, name: userInfo.name, profile_image_url: userInfo.profile_image_url, total: total });
+        }
+    }
+    return { success: true, referrals: returnRows };
 });
 //////////////////
 //Handle SetUserNotificationEmail
@@ -560,7 +648,7 @@ async function main() {
     }
     let port = process.env.PORT;
     if (g_localDevServer)
-        port = '3000';
+        port = '80';
     app.listen(port);
     console.log(`Listening on port ${port}`);
 }

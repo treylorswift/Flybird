@@ -72,7 +72,7 @@ export class SignUpPage extends DOMComponent
         let h = 144 / window.devicePixelRatio;
         
         em.innerHTML = 
-           `<div style="position:fixed; left:0; top:0; width:100vw; height:100vh; display:flex; background-color: #dce3e9">
+           `<div class="subscriptionBackground">
             <div style="margin:auto; border-radius: 6px; box-shadow: #bcbcbc 0px 0px 11px; padding: 30px 30px; background-color: #fff; max-width:400px">
                 <div style="display:flex; justify-content:center; align-items: center">
                     <img src="${imageUrl}" style="vertical-align:middle; width:${w}px; height:${h}px; border-radius:${w}px">
@@ -85,7 +85,9 @@ export class SignUpPage extends DOMComponent
                 <div id="signUpResult"></div>
                 </center>
             </div>
-            </div>`;
+            </div>
+                <div class="subscriptionLogoDiv"><a href="/"><img class="subscriptionLogoImg" src="/flybird.png"></a></div>
+`;
 
         this.signUpButton = em.querySelector('#signUpButton');       
         this.emailInput = em.querySelector('#email');

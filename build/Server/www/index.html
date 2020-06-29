@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Influencer Toolkit Sign Up</title>
+    <title>Flybird</title>
     <style>
     
     :root {
@@ -115,14 +115,45 @@
         filter: drop-shadow(0px 0px 2px #aaa);
     }
 
-
     .dockItemTitle {
-        margin-left:4px;
+        margin-left:8px;
     }
 
     .dockItemTitle:hover {
         filter:none;
     }
+
+    .subscriptionBackground
+    {
+        position:fixed;
+        left:0;
+        top:0; 
+        width:100vw;
+        height:100vh;
+        display:flex;
+        background: rgb(255,255,255);
+        background: linear-gradient(0deg, rgba(255,255,255,1) 0%, var(--main-bg-color) 25%, var(--main-bg-color) 100%);
+        
+    }
+
+    .subscriptionLogoDiv {
+        bottom: 0;
+        right: 0px;
+        margin-bottom: 16px;
+        position: absolute;
+        margin-right: 16px;
+    }
+
+    .subscriptionLogoImg
+    {
+        width:40px; height:40px;
+        filter: drop-shadow(0px 0px 1px #aaa);
+    }
+
+    .subscriptionLogoImg:hover {
+        filter: drop-shadow(0px 0px 3px #aaa);
+    }
+
     .section {
         background-color:#fff;
         padding: 30px 34px;
@@ -134,7 +165,8 @@
         line-height: 1;
     }
 
-    .followerHeaderRow
+    /* similar to the followerRow CSS in the desktop app*/
+    .referrerHeaderRow
     {
         display:flex;
         flex-wrap:nowrap;
@@ -144,18 +176,10 @@
         padding-top:2px;
         margin-bottom:2px;
         background-color:#deedff;
+        border-radius: 6px 6px 0px 0px;
     }
 
-    .followerRowDeleter
-    {
-        transition-delay: 0.25s;
-        transition-duration: 1s;
-        transition-propert: opacity, max-height;
-        overflow-y:hidden;
-        max-height:60px;
-    }
-
-    .followerRow
+    .referrerRow
     {
         display:flex;
         flex-wrap:nowrap;
@@ -167,12 +191,12 @@
         background-color:#F8F8F8;
         cursor:pointer;
     }
-    .followerRow:hover
+    .referrerRow:hover
     {
         background-color:#F3F3F3;
     }
 
-    .followerIcon
+    .referrerIcon
     {
         display: inline-block;
         width: 40px;
@@ -182,12 +206,12 @@
         margin-left: 2px;
         margin-right: 2px;
     }
-    .followerIconImg
+    .referrerIconImg
     {
         width:40px;
         height:40px;
     }
-    .followerName
+    .referrerName
     {
         display: inline-block;
         width: 160px;
@@ -196,7 +220,7 @@
         margin-right: 2px;
     }
 
-    .followerScreenName
+    .referrerScreenName
     {
         display: inline-block;
         width: 160px;
@@ -205,23 +229,15 @@
         margin-right: 2px;
     }
 
-    .followerFollowersCount
+    .referrerTotal
     {
         display: inline-block;
         width: 100px;
         overflow-x:hidden;
         margin-left: 2px;
-        margin-right: 2px;
+        margin-right: 12px;
     }
 
-    .followerContacted
-    {
-        display: inline-block;
-        width: 80px;
-        overflow-x:hidden;
-        margin-left: 2px;
-        margin-right: 2px;
-    }
 
     #modal
     {

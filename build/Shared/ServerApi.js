@@ -31,23 +31,6 @@ class GetLoggedInUserResponse extends RPC.Response {
 }
 exports.GetLoggedInUserResponse = GetLoggedInUserResponse;
 ////////////////////
-//Initiate Login Oauth Flow
-//////////////////
-async function Login() {
-    return new LoginCall().Call();
-}
-exports.Login = Login;
-class LoginCall extends RPC.Call {
-    constructor() {
-        super(...arguments);
-        this.method = "Login";
-    }
-}
-exports.LoginCall = LoginCall;
-class LoginResponse extends RPC.Response {
-}
-exports.LoginResponse = LoginResponse;
-////////////////////
 //Sign Up for a mailing list
 //////////////////
 async function SignUp(args) {
@@ -145,4 +128,21 @@ exports.GetUserSignUpsCall = GetUserSignUpsCall;
 class GetUserSignUpsResponse extends RPC.Response {
 }
 exports.GetUserSignUpsResponse = GetUserSignUpsResponse;
+/////////////////
+//Get stats about who has referred people for the sign ups
+///////////////////
+async function GetReferralStats() {
+    return new GetReferralStatsCall().Call();
+}
+exports.GetReferralStats = GetReferralStats;
+class GetReferralStatsCall extends RPC.Call {
+    constructor() {
+        super(...arguments);
+        this.method = "GetReferralStats";
+    }
+}
+exports.GetReferralStatsCall = GetReferralStatsCall;
+class GetReferralStatsResponse extends RPC.Response {
+}
+exports.GetReferralStatsResponse = GetReferralStatsResponse;
 //# sourceMappingURL=ServerApi.js.map

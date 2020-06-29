@@ -138,7 +138,7 @@ export class HomePage extends DOMComponent
 
         //the link they will direct potential subscribers to once they set their email address..
         em.innerHTML = 
-           `<div style="max-width:530px">
+           `<div style="max-width:560px">
             <div class="section">
                 What message would you like to show on your subscription page?<br/><br/>
                 <textarea id="message" style="box-sizing: border-box; width:100%; height:96px">${message}</textarea>
