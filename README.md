@@ -28,7 +28,7 @@ https://flybirdy.herokuapp.com/subscribe/treylorswift?twRef=balajis
 The [Flybird Desktop App](https://github.com/treylorswift/FlybirdDesktopApp) can be used to mass message all of your Twitter followers, sending each one a unique link to your subscriber page with their handle in the referral code.
 
 
-### Deploying to Heroku
+## Deploying to Heroku
 Out of the box this repo can be deployed to Heroku so long as the following Heroku config variables are defined:
 - DATABASE_URL - a url for a Postgresql database
 - SESSION_SECRET - a random string used to encrypt session cookies
