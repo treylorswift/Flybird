@@ -8,11 +8,11 @@ Once you sign in, you can quickly create a page to direct potential subscribers 
 
 For example, Twitter user 'treylorswift' has a subscription page at https://flybirdy.herokuapp.com/subscribe/treylorswift
 
-Other Twitter users can refer people to your subscription page and receive credit for the signup by using of a referral code in the subscription page link, like this:
+The Flybird Desktop App can be used to mass message all of your Twitter followers, sending each one a unique link to your subscriber page with their handle in the referral code.
+
+For example, Twitter user 'balajis' will receive credit any time someone signs up to Treylorswift's subscription page with the following link:
 
 https://flybirdy.herokuapp.com/subscribe/treylorswift?twRef=balajis
-
-The Flybird Desktop App can be used to mass message all of your Twitter followers, sending each one a unique link to your subscriber page with their handle in the referral code.
 
 ### Deploying to Heroku
 Out of the box this repo can be deployed to Heroku so long as the following Heroku config variables are defined:
