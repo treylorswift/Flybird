@@ -15,7 +15,7 @@ const RPC = require("../Shared/RPC");
 //CONSUMER_SECRET - the Twitter App API
 //GMAIL_USER - the gmail account notification emails are sent from
 //GMAIL_PW - password for the gmail account the notification emails are sent from
-const g_localDevServer = true;
+const g_localDevServer = false;
 if (g_localDevServer)
     console.log("Running in local dev mode..");
 else
@@ -30,7 +30,7 @@ var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
-var CALLBACK_URL = 'https://itk-signup.herokuapp.com/auth/twitter/callback';
+var CALLBACK_URL = 'https://flybirdy.herokuapp.com/auth/twitter/callback';
 if (g_localDevServer)
     CALLBACK_URL = 'http://localhost/auth/twitter/callback';
 //this is used to encrypt session cookies - in production, should be in an environment variable defined on the server
@@ -395,7 +395,7 @@ HTTPRPCTransport_1.HTTPRPC.SetHandler(ServerApi.SignUpCall, async (c) => {
 
 Cheers,
 
-Influencer Toolkit`
+Flybirdy`
         };
         let sendMailPromise = new Promise((resolve, reject) => {
             transporter.sendMail(mailOptions, (err, info) => {

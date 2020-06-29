@@ -15,7 +15,7 @@ import * as RPC from '../Shared/RPC'
 //GMAIL_USER - the gmail account notification emails are sent from
 //GMAIL_PW - password for the gmail account the notification emails are sent from
 
-const g_localDevServer = true;
+const g_localDevServer = false;
 if (g_localDevServer)
     console.log("Running in local dev mode..");
 else
@@ -34,7 +34,7 @@ const nodemailer    = require('nodemailer');
 const bodyParser    = require('body-parser');
 
 
-var CALLBACK_URL = 'https://itk-signup.herokuapp.com/auth/twitter/callback';
+var CALLBACK_URL = 'https://flybirdy.herokuapp.com/auth/twitter/callback';
 
 if (g_localDevServer)
     CALLBACK_URL = 'http://localhost/auth/twitter/callback';
@@ -580,7 +580,7 @@ HTTPRPC.SetHandler(ServerApi.SignUpCall, async (c:ServerApi.SignUpCall):Promise<
 
 Cheers,
 
-Influencer Toolkit`
+Flybirdy`
         };
 
         let sendMailPromise = new Promise<boolean>((resolve,reject)=>
