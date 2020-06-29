@@ -40,13 +40,13 @@ export class HomePage extends DOMComponent
             this.emailResult.innerHTML = `<br/><br/>${str}`;
         }
 
-        var linkPath = `/${this.userInfo.screen_name}`
-        var fullLink = `https://itk-signup.herokuapp.com/${this.userInfo.screen_name}`
+        var linkPath = `/subscribe/${this.userInfo.screen_name}`
+        var fullLink = `https://flybirdy.herokuapp.com/subscribe/${this.userInfo.screen_name}`
 
         if (json.success===true)
-            setResult(`Thanks! Direct potential subscribers here:<br /><br /><a href="${linkPath}">${fullLink}</a><br/><br/>When someone signs up, you will receive an email at the address you provided above. Good luck!`);
+            this.DisplayModalMessage(`Thanks! Direct potential subscribers here:<br /><br /><a href="${linkPath}" target="_blank">${fullLink}</a><br/><br/>When someone signs up, you will receive an email at the address you provided above. Good luck!`);
         else
-            setResult('Sorry, something went wrong. Please try again later.');
+            this.DisplayModalMessage('Sorry, something went wrong. Please try again later.');
 
     }
 

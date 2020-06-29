@@ -35,6 +35,12 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="DOMComponent.ts" />
+    <TypeScriptCompile Include="DOMSite.ts" />
+    <TypeScriptCompile Include="HomePage.ts" />
+    <TypeScriptCompile Include="LoginPage.ts" />
+    <TypeScriptCompile Include="ReferralsPage.ts" />
+    <TypeScriptCompile Include="SignUpPage.ts" />
     <TypeScriptCompile Include="Site.ts" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
