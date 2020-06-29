@@ -1,22 +1,18 @@
 ## Flybird
 
-Flybird helps boost subscriptions to your newsletter.
+Flybird helps boost subscriptions to your newsletter. Try it at https://flybirdy.herokuapp.com.
 
-Visit the website, sign in with your Twitter account, and setup a subscriptions page. Share this link with anyone who might be interested in learning more about your newsletter.
+<img src="https://i.imgur.com/WyeoQQ9.png" width=620>
 
-For example, Twitter user 'treylorswift' would have a subscription page at https://flybirdy.herokuapp.com/subscribe/treylorswift
+Once you sign in, you can quickly create a page to direct potential subscribers to.
 
-Any time some submits their email address on your subscriptions page, you'll get an email notification.
+For example, Twitter user 'treylorswift' has a subscription page at https://flybirdy.herokuapp.com/subscribe/treylorswift
 
-Other Twitter users can refer people to your subscription page and receive credit for the signup by use of a referral code in the subscription page link, like this:
+Other Twitter users can refer people to your subscription page and receive credit for the signup by using of a referral code in the subscription page link, like this:
 
 https://flybirdy.herokuapp.com/subscribe/treylorswift?twRef=balajis
 
-![admin](https://i.imgur.com/JKYe1aB.png)
-![signup](https://i.imgur.com/MTsT8It.png)
-
-### Live Demo
-There is a live version deployed to Heroku currently at https://flybirdy.herokuapp.com
+The Flybird Desktop App can be used to mass message all of your Twitter followers, sending each one a unique link to your subscriber page with their handle in the referral code.
 
 ### Deploying to Heroku
 Out of the box this repo can be deployed to Heroku so long as the following Heroku config variables are defined:
