@@ -21,7 +21,7 @@ export class LoginPage extends DOMComponent
                 </div>
                 <div style="text-align:center">
                     <br/>
-                    Want to boost subscriptions to to your newsletter?<br/><br/><br/>We can help. Let's get started!<br/><br/><br/>
+                    Want to boost subscriptions to your newsletter?<br/><br/><br/>We can help. Let's get started!<br/><br/><br/>
                     <div class="divButton" onclick="window.location='/auth/twitter'" style="padding: 9px 15px; box-shadow: 0 0 2px #000">
                         <div style="display:flex; align-items:center">
                             <img src="twitter-button.png" style="margin-right: 6px; width:${tw}px; height:${th}px"><span>Sign in with Twitter</span>

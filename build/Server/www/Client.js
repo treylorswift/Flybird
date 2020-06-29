@@ -55,8 +55,8 @@ define("Shared/RPC", ["require", "exports"], function (require, exports) {
     exports.Response = Response;
     class Transport {
     }
-    exports.Transport = Transport;
     Transport.g_transport = null;
+    exports.Transport = Transport;
     function SetTransport(t) {
         Transport.g_transport = t;
     }
@@ -497,8 +497,8 @@ define("Client/DOMComponent", ["require", "exports"], function (require, exports
             DOMPopupHandle.count++;
         }
     }
-    exports.DOMPopupHandle = DOMPopupHandle;
     DOMPopupHandle.count = 0;
+    exports.DOMPopupHandle = DOMPopupHandle;
     class DOMComponent {
         constructor(parent) {
             this.parent = parent;
@@ -904,7 +904,7 @@ define("Client/LoginPage", ["require", "exports", "Client/DOMComponent"], functi
                 </div>
                 <div style="text-align:center">
                     <br/>
-                    Want to boost subscriptions to to your newsletter?<br/><br/><br/>We can help. Let's get started!<br/><br/><br/>
+                    Want to boost subscriptions to your newsletter?<br/><br/><br/>We can help. Let's get started!<br/><br/><br/>
                     <div class="divButton" onclick="window.location='/auth/twitter'" style="padding: 9px 15px; box-shadow: 0 0 2px #000">
                         <div style="display:flex; align-items:center">
                             <img src="twitter-button.png" style="margin-right: 6px; width:${tw}px; height:${th}px"><span>Sign in with Twitter</span>
@@ -1087,7 +1087,7 @@ define("Client/Site", ["require", "exports", "Shared/RPC", "Shared/ServerApi", "
             this.Render(document.getElementById("site"));
         }
     }
-    exports.Site = Site;
     Site.g_site = null;
+    exports.Site = Site;
 });
 //# sourceMappingURL=Client.js.map
