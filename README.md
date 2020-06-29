@@ -15,11 +15,18 @@ For example, Twitter user 'Treylorswift' has a subscription page at https://flyb
 - Receive email notifications every time a sign up occurs
 - View a leaderboard of referrers to see who is generating sign ups on your behalf
 
-The Flybird Desktop App can be used to mass message all of your Twitter followers, sending each one a unique link to your subscriber page with their handle in the referral code.
+## Referral Codes
+
+Links to your subscription page can embed a referral code to track who is generating sign ups for you.
 
 For example, Twitter user 'balajis' will receive credit any time someone signs up to Treylorswift's subscription page with the following link:
 
 https://flybirdy.herokuapp.com/subscribe/treylorswift?twRef=balajis
+
+## Get The Word Out
+
+The [Flybird Desktop App](https://github.com/treylorswift/FlybirdDesktopApp) can be used to mass message all of your Twitter followers, sending each one a unique link to your subscriber page with their handle in the referral code.
+
 
 ### Deploying to Heroku
 Out of the box this repo can be deployed to Heroku so long as the following Heroku config variables are defined:
