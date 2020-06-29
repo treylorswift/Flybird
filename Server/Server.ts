@@ -144,13 +144,14 @@ class PGDB
             //console.log("Remove this DROP TABLE");
             //res = await this.pool.query(`DROP TABLE SignUps`);
 
+            //the constraing prevents the same email address subscribing to the same publisher more than once
             res = await this.pool.query(
                 `CREATE TABLE IF NOT EXISTS SignUps
                 (
                     publisher_id_str TEXT NOT NULL,
                     subscriber_email TEXT NOT NULL,
                     referrer_id_str TEXT,
-                    CONSTRAINT prevent_duplicate_signups UNIQUE(publisher_id_str,subscriber_email,referrer_id_str)
+                    CONSTRAINT prevent_duplicate_signups UNIQUE(publisher_id_str,subscriber_email)
                 );`);
 
             //index the SignUps by publisher and referrer
