@@ -581,7 +581,7 @@ HTTPRPC.SetHandler(ServerApi.SignUpCall, async (c:ServerApi.SignUpCall):Promise<
 
 Cheers,
 
-Flybirdy`
+Flybird`
         };
 
         let sendMailPromise = new Promise<boolean>((resolve,reject)=>

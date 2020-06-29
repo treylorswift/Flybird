@@ -396,7 +396,7 @@ HTTPRPCTransport_1.HTTPRPC.SetHandler(ServerApi.SignUpCall, async (c) => {
 
 Cheers,
 
-Flybirdy`
+Flybird`
         };
         let sendMailPromise = new Promise((resolve, reject) => {
             transporter.sendMail(mailOptions, (err, info) => {
