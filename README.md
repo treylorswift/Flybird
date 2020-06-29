@@ -4,9 +4,16 @@ Flybird helps boost subscriptions to your newsletter. Try it at https://flybirdy
 
 <img src="https://i.imgur.com/WyeoQQ9.png" width=620>
 
-Once you sign in, you can quickly create a page to direct potential subscribers to.
+After signing in, your subscription page is automatically created.
 
-For example, Twitter user 'treylorswift' has a subscription page at https://flybirdy.herokuapp.com/subscribe/treylorswift
+For example, Twitter user 'Treylorswift' has a subscription page at https://flybirdy.herokuapp.com/subscribe/treylorswift.
+
+## Features
+
+- Customize the message displayed on your subscription page
+- Export a .csv of all email addresses who have signed up
+- Receive email notifications every time a sign up occurs
+- View a leaderboard of referrers to see who is generating sign ups on your behalf
 
 The Flybird Desktop App can be used to mass message all of your Twitter followers, sending each one a unique link to your subscriber page with their handle in the referral code.
 
